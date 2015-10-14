@@ -1,0 +1,18 @@
+<BotSettings>
+  <UserName>YourTwitchName</UserName>
+  <OAuthChat>Get From: https://twitchapps.com/tmi/</OAuthChat>
+  <BotClientID>fjhkjex3dosfwql6jcne4klacgixv80
+  </BotClientID>
+  <BotOAuth>Get From: http://goo.gl/53mMa2</BotOAuth> 
+  <TwitchIRC>irc.twitch.tv</TwitchIRC>
+  <OpenSubmissionMessage>Submissions Open!
+Use !submit in chat.</OpenSubmissionMessage>
+  <CloseSubmissionsMessage>Submissions closed!
+Will re-open when 
+queue is empty.</CloseSubmissionsMessage>
+  <MaxSubmissionsForSingleUser>2</MaxSubmissionsForSingleUser>
+  <FTPAddress>ftp.post_html_here.com</FTPAddress>
+  <FTPUserName></FTPUserName>
+  <FTPPassword></FTPPassword>
+  <HTMLPage>queue.html</HTMLPage>
+</BotSettings>
