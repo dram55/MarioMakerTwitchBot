@@ -12,6 +12,9 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,11 +27,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -100,18 +100,27 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>cd $(TargetDir)
+    <PostBuildEvent>if Debug == $(ConfigurationName) goto SkipPublish
+
+cd $(TargetDir)
+IF NOT EXIST Publish MKDIR Publish
 IF EXIST Publish\$(TargetFileName) DEL Publish\$(TargetFileName)
-IF EXIST TwitchCSharp.pdb DEL TwitchCSharp.pdb
 cd $(ProjectDir)Resources
 ilmerge.exe "$(TargetDir)$(TargetFileName)" "$(TargetDir)TwitchCSharp.dll" "$(TargetDir)TwitchBotLib.dll" /out:"$(TargetDir)Publish\$(TargetFileName)" /target:exe
 xcopy *.txt* "$(TargetDir)Publish" /Y
-xcopy *.xml* "$(TargetDir)Publish" /Y
+xcopy *settings.xml* "$(TargetDir)Publish" /Y
 xcopy *.html "$(TargetDir)Publish" /Y
-xcopy sounds "$(TargetDir)Publish\sounds" /s /i
+xcopy sounds "$(TargetDir)Publish\sounds" /s /i /Y
 set PDB=$(TargetDir)Publish\$(TargetFileName)
 set PDB="%25PDB:~0,-3%25pdb"
-IF EXIST %25PDB%25 DEL %25PDB%25</PostBuildEvent>
+IF EXIST %25PDB%25 DEL %25PDB%25
+
+:SkipPublish
+cd $(ProjectDir)Resources
+IF NOT EXIST $(TargetDir)settings.xml xcopy settings.xml "$(TargetDir)settings.xml" /s /i /Y
+IF NOT EXIST $(TargetDir)sounds MKDIR $(TargetDir)sounds
+xcopy sounds "$(TargetDir)sounds" /s /i /Y
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
