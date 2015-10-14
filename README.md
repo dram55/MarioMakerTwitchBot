@@ -3,7 +3,7 @@ Take Level Requests from Twitch chat ```!submit 0000-1111-AAAA-EEEE```. Requests
 
 Submission status & current level are written to respective text files which can be used within OBS. (open.txt/close.txt/nextLevel.txt)
 
-If desired, the current queue of levels can be embedded to an html page and FTP'd to a webserver of your choice.
+If desired, the current queue of levels can be embedded to an html page using {details} and {date} tags and FTP'd to a webserver of your choice.
 
 
 ## To Use Program
