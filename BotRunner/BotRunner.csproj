@@ -100,7 +100,18 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(TargetDir)publish.cmd</PostBuildEvent>
+    <PostBuildEvent>cd $(TargetDir)
+IF EXIST Publish\$(TargetFileName) DEL Publish\$(TargetFileName)
+IF EXIST TwitchCSharp.pdb DEL TwitchCSharp.pdb
+cd $(ProjectDir)Resources
+ilmerge.exe "$(TargetDir)$(TargetFileName)" "$(TargetDir)TwitchCSharp.dll" "$(TargetDir)TwitchBotLib.dll" /out:"$(TargetDir)Publish\$(TargetFileName)" /target:exe
+xcopy *.txt* "$(TargetDir)Publish" /Y
+xcopy *.xml* "$(TargetDir)Publish" /Y
+xcopy *.html "$(TargetDir)Publish" /Y
+xcopy sounds "$(TargetDir)Publish\sounds" /s /i
+set PDB=$(TargetDir)Publish\$(TargetFileName)
+set PDB="%25PDB:~0,-3%25pdb"
+IF EXIST %25PDB%25 DEL %25PDB%25</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
