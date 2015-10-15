@@ -10,7 +10,8 @@ If desired, the current queue of levels can be embedded to an html page using {d
  + Download zip from [here](http://dram55.com/programs)
  + Follow the Readme.txt to help set up the both authorizations, configuration, etc..
 
-
+## Issues
+ + Please [report any issues](https://github.com/dram55/MarioMakerTwitchBot/issues/new) if you come across any. 
 
 ## Code
 ### Get Source
