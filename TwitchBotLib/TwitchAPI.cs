@@ -19,7 +19,7 @@ namespace TwitchBotLib
         public List<string> Subscribers
         {
             get {
-                if (connected)
+                if (_subscribers!=null && connected)
                 {
                     UpdateSubscribers();
                     return _subscribers;
@@ -31,7 +31,7 @@ namespace TwitchBotLib
 
         public TwitchAPI(string botAuth, string botClientID)
         {
-
+            _subscribers = new List<string>();
             connected = false;
 
             try
