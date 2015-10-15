@@ -204,8 +204,11 @@ namespace TwitchBotLib
                                 int amt;
                                 if (Int32.TryParse(command, out amt))
                                 {
+                                    if (amt<=0)
+                                        break;
                                     BotSettings.MaxSubmissionsForSingleUser = amt;
-                                    Console.WriteLine("Max set to " + amt);
+                                    Console.WriteLine("User can only submit " + amt + " level(s) per round.");
+                                    Console.WriteLine();
                                 }
                             }
 
