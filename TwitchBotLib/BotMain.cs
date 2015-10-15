@@ -33,20 +33,19 @@ namespace TwitchBotLib
             Console.WriteLine("Welcome to Chat Bot!");
             Console.WriteLine("");
             Console.WriteLine("Commands for Mario Maker:");
-            Console.WriteLine("o         - Open Queue");
-            Console.WriteLine("c         - Close Queue");
-            Console.WriteLine("Enter Key - Next Level");
-            Console.WriteLine("add <n> <l> - Force add level to current queue. <n> name, <l> level");
-            Console.WriteLine("q         - Display Remaining Queue");
-            Console.WriteLine("limit 15  - Bot chooses 15 submitted levels at random");
-            Console.WriteLine("max 3     - Bot chooses maximum of 3 levels from 1 person");
-            Console.WriteLine("s <cmnt>  - Save your favorite levels to levels.csv with a comment");
-            Console.WriteLine("");
+            Console.WriteLine("o           - Open Queue");
+            Console.WriteLine("c           - Close Queue");
+            Console.WriteLine("Enter Key   - Next Level");
+            Console.WriteLine("add <n> <l> - Force add level to current queue. <n>=name, <l>=level code");
+            Console.WriteLine("q           - Display Remaining Queue");
+            Console.WriteLine("limit 15    - Bot chooses 15 submitted levels at random");
+            Console.WriteLine("max 3       - Maximum of 3 level submissions per person");
+            Console.WriteLine("s <cmnt>    - Save the current level to levels.csv with a comment");
             Console.WriteLine("");
             Console.WriteLine("Commands for Sounds:");
-            Console.WriteLine("v 30       - Set volume of media player to 30");
-            Console.WriteLine("cool 65    - Set cooldown of sound commands to 65 seconds.");
-            Console.WriteLine("exit       - Quit");
+            Console.WriteLine("v 30        - Set volume of media player to 30");
+            Console.WriteLine("cool 65     - Set cooldown of sound commands to 65 seconds.");
+            Console.WriteLine("exit        - Quit");
             Console.WriteLine("");
             Console.WriteLine("______________________________________________________");
             Console.WriteLine("");
@@ -69,17 +68,17 @@ namespace TwitchBotLib
 
             Console.WriteLine("Connecting...");
             Console.WriteLine("");
-            using (var client = new IrcDotNet.TwitchIrcClient())
+            using (var client = new TwitchIrcClient())
             {
                 client.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
                 client.Registered += IrcClient_Registered;
                 // Wait until connection has succeeded or timed out.
                 using (var registeredEvent = new ManualResetEventSlim(false))
                 {
-                    //Group chat - for whisper (not using)
-                    //byte[]ip = {199,9,253,119};
-                    //IPAddress p = new IPAddress(ip);
-                    //IPEndPoint i = new IPEndPoint(p, 443);
+                        //Group chat - for whisper (not using)
+                        //byte[]ip = {199,9,253,119};
+                        //IPAddress p = new IPAddress(ip);
+                        //IPEndPoint i = new IPEndPoint(p, 443);
 
                         using (var connectedEvent = new ManualResetEventSlim(false))
                         {
@@ -94,24 +93,14 @@ namespace TwitchBotLib
                                 });
                             if (!connectedEvent.Wait(8000))
                             {
-                                Console.WriteLine("ERROR: Can't connect to " + server);
-                                Console.WriteLine("UserName and/or OAuthChat in settings.xml are invalid");
-                                Console.WriteLine("See ReadMe.txt");
-                                Console.WriteLine(" ");
-                                Console.WriteLine("Press Enter to Exit...");
-                                Console.Read();
+                                DisplayConnectionError(server);
                                 return;
                             }
-                        }
+                    }
 
                     if (!registeredEvent.Wait(8000))
                     {
-                        Console.WriteLine("ERROR: Can't connect to " + server);
-                        Console.WriteLine("UserName and/or OAuthChat in settings.xml are invalid");
-                        Console.WriteLine("See ReadMe.txt");
-                        Console.WriteLine(" ");
-                        Console.WriteLine("Press Enter to Exit...");
-                        Console.Read();
+                        DisplayConnectionError(server);
                         return;
                     }
                 }
@@ -124,7 +113,6 @@ namespace TwitchBotLib
                 HandleEventLoop(client);
             }
         }
-
 
         #region Command Line Main Loop
         private static void HandleEventLoop(IrcDotNet.IrcClient client)
@@ -216,7 +204,7 @@ namespace TwitchBotLib
                             {
                                 command = command.Remove(0, 5).Trim();
                                 int tempCooldown;
-                                if (Int32.TryParse(command, out tempCooldown))
+                                if (int.TryParse(command, out tempCooldown))
                                 {
                                     cooldownSeconds = tempCooldown;
                                 }
@@ -539,6 +527,18 @@ namespace TwitchBotLib
                 sw.Write(html);
             }
 
+        }
+
+        private static void DisplayConnectionError(string server)
+        {
+            Console.WriteLine("ERROR: Can't connect to " + server);
+            Console.WriteLine("<UserName> and/or <OAuthChat> are invalid in the settings file: ");
+            Console.WriteLine(BotSettings.RootDirectory + "\\settings.xml");
+            Console.WriteLine(" ");
+            Console.WriteLine("See ReadMe.txt for help");
+            Console.WriteLine(" ");
+            Console.WriteLine("Press Enter to Exit...");
+            Console.Read();
         }
 
         private static void InvalidSubmission(IrcChannel channel)
