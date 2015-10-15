@@ -91,7 +91,7 @@ namespace TwitchBotLib
                 { "FTPAddress", new BotSetting() { DefaultValue = "ftp.dram55.com" } },
                 { "FTPUserName", new BotSetting() { DefaultValue = "username@dram55.com" } },
                 { "FTPPassword", new BotSetting() { DefaultValue = "" } },
-                { "HTMLPage", new BotSetting() { DefaultValue = "index.html" } },
+                { "HTMLPage", new BotSetting() { DefaultValue = "queue.html" } },
                 //Add other settings here
                 //{ "NewSettingName", new BotSetting() { DefaultValue = "New Setting Default Value" } },
             };
