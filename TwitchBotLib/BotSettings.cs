@@ -32,12 +32,13 @@ namespace TwitchBotLib
                 else
                     return 2;
             }
-            private set { _maxSubmissionsForSingleUser = value.ToString(); }
+            set { _maxSubmissionsForSingleUser = value.ToString(); }
         }
         public static string FTPAddress { get; private set; }
         public static string FTPUserName { get; private set; }
         public static string FTPPassword { get; private set; }
         public static string HTMLPage { get; private set; }
+        public static string RootDirectory {get{return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";}}
         //Add other settings here
         //public static string NewSetting { get; private set; }
 

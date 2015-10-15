@@ -12,9 +12,9 @@ namespace TwitchBotLib
         public int LevelLimit { get; set; }
         public List<Tuple<string, string>> AllLevels { get; private set; }
 
-        const string OPEN_TEXT_FILE = "text\\open.txt";
-        const string CLOSE_TEXT_FILE = "text\\close.txt";
-        const string NEXT_LEVEL_FILE = "text\\nextLevel.txt";
+        string OPEN_TEXT_FILE = BotSettings.RootDirectory + "text\\open.txt";
+        string CLOSE_TEXT_FILE = BotSettings.RootDirectory + "text\\close.txt";
+        string NEXT_LEVEL_FILE = BotSettings.RootDirectory + "text\\nextLevel.txt";
 
         public string CurrentLevel
         {
@@ -157,7 +157,6 @@ namespace TwitchBotLib
         public void ForceAddLevel(string levelCode,string submitter)
         {
             _finalLevels.AddLast(new Tuple<string, string>(levelCode, submitter));
-            displayNextLevel();
         }
 
 
