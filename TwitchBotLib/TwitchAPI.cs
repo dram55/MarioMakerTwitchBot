@@ -43,7 +43,7 @@ namespace TwitchBotLib
             }
             catch (Exception)
             {
-                Console.WriteLine("WARNING: Unable to retrieve subs list. The BotOAuth node in settings.xml is invalid.");
+                Console.WriteLine("WARNING: Unable to retrieve subs list. The <BotOAuth> node in settings.xml is invalid.");
                 Console.WriteLine("See ReadMe.txt");
             }
 
