@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using IrcDotNet;
 using System.Net;
 using WMPLib;
 using System.IO;
-using TwitchCSharp.Models;
 
 namespace TwitchBotLib
 {
@@ -378,7 +376,7 @@ namespace TwitchBotLib
 
                 if (comment.Contains(System.Environment.NewLine))
                 {
-                    comment = String.Format("\"{0}\"", comment);
+                    comment = string.Format("\"{0}\"", comment);
                 }
 
                 try
@@ -469,17 +467,18 @@ namespace TwitchBotLib
                 string ftppassword = BotSettings.FTPPassword;
 
                 FtpWebRequest ftpClient = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + ftpurl + "/" + BotSettings.HTMLPage));
-                ftpClient.Credentials = new System.Net.NetworkCredential(ftpusername, ftppassword);
-                ftpClient.Method = System.Net.WebRequestMethods.Ftp.UploadFile;
+                ftpClient.Credentials = new NetworkCredential(ftpusername, ftppassword);
+                ftpClient.Method = WebRequestMethods.Ftp.UploadFile;
                 ftpClient.UseBinary = true;
                 ftpClient.KeepAlive = true;
-                System.IO.FileInfo fi = new System.IO.FileInfo(tempFile);
+                FileInfo fi = new FileInfo(tempFile);
                 ftpClient.ContentLength = fi.Length;
                 byte[] buffer = new byte[4097];
                 int bytes = 0;
                 int total_bytes = (int)fi.Length;
-                System.IO.FileStream fs = fi.OpenRead();
+                FileStream fs = fi.OpenRead();
                 System.IO.Stream rs = ftpClient.GetRequestStream();
+
                 while (total_bytes > 0)
                 {
                     bytes = fs.Read(buffer, 0, buffer.Length);
@@ -487,11 +486,11 @@ namespace TwitchBotLib
                     total_bytes = total_bytes - bytes;
                 }
                 //fs.Flush();
+
                 fs.Close();
                 rs.Close();
-                FtpWebResponse uploadResponse = (FtpWebResponse)ftpClient.GetResponse();
-                string value = uploadResponse.StatusDescription;
-                uploadResponse.Close();
+                //FtpWebResponse uploadResponse = (FtpWebResponse)ftpClient.GetResponse();
+                //uploadResponse.Close();
 
                 File.Delete(tempFile);
                 Directory.Delete(tempDir);
@@ -510,7 +509,7 @@ namespace TwitchBotLib
         private static void UpdateHTMLPage(string fileName, string tempDir, string tempFile)
         {
 
-            string html = String.Empty;
+            string html ="";
 
             using (StreamReader sr = new StreamReader(fileName))
             {
