@@ -118,6 +118,7 @@ IF EXIST %25PDB%25 DEL %25PDB%25
 :SkipPublish
 cd $(ProjectDir)Resources
 IF NOT EXIST $(TargetDir)settings.xml xcopy settings.xml "$(TargetDir)settings.xml" /s /i /Y
+IF NOT EXIST $(TargetDir)*.html xcopy *.html "$(TargetDir)" /Y
 IF NOT EXIST $(TargetDir)sounds MKDIR $(TargetDir)sounds
 xcopy sounds "$(TargetDir)sounds" /s /i /Y
 </PostBuildEvent>
