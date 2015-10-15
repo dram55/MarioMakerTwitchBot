@@ -11,7 +11,7 @@ Use !submit in chat.</OpenSubmissionMessage>
 Will re-open when 
 queue is empty.</CloseSubmissionsMessage>
   <MaxSubmissionsForSingleUser>2</MaxSubmissionsForSingleUser>
-  <FTPAddress>ftp.post_html_here.com</FTPAddress>
+  <FTPAddress></FTPAddress>
   <FTPUserName></FTPUserName>
   <FTPPassword></FTPPassword>
   <HTMLPage>queue.html</HTMLPage>
