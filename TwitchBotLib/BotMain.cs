@@ -15,7 +15,6 @@ namespace TwitchBotLib
     {
         //IRC variables, static
         static int invalidSubmission;
-        //static List<string> subs;
         static TwitchAPI twitchAPI;
         static LevelSubmitter levels;
         static short soundPlayerVolume;
@@ -37,12 +36,14 @@ namespace TwitchBotLib
             Console.WriteLine("o         - Open Queue");
             Console.WriteLine("c         - Close Queue");
             Console.WriteLine("Enter Key - Next Level");
-            Console.WriteLine("add <n> <l> - Adds level to queue. <n> name, <l> level");
+            Console.WriteLine("add <n> <l> - Force add level to current queue. <n> name, <l> level");
             Console.WriteLine("q         - Display Remaining Queue");
             Console.WriteLine("limit 15  - Bot chooses 15 submitted levels at random");
+            Console.WriteLine("max 3     - Bot chooses maximum of 3 levels from 1 person");
             Console.WriteLine("s <cmnt>  - Save your favorite levels to levels.csv with a comment");
             Console.WriteLine("");
-            Console.WriteLine("Commands for Normal Stuff:");
+            Console.WriteLine("");
+            Console.WriteLine("Commands for Sounds:");
             Console.WriteLine("v 30       - Set volume of media player to 30");
             Console.WriteLine("cool 65    - Set cooldown of sound commands to 65 seconds.");
             Console.WriteLine("exit       - Quit");
@@ -91,7 +92,7 @@ namespace TwitchBotLib
                                     Password = BotSettings.OAuthChat,
                                     UserName = BotSettings.UserName
                                 });
-                            if (!connectedEvent.Wait(3000))
+                            if (!connectedEvent.Wait(8000))
                             {
                                 Console.WriteLine("ERROR: Can't connect to " + server);
                                 Console.WriteLine("UserName and/or OAuthChat in settings.xml are invalid");
@@ -103,7 +104,7 @@ namespace TwitchBotLib
                             }
                         }
 
-                    if (!registeredEvent.Wait(3000))
+                    if (!registeredEvent.Wait(8000))
                     {
                         Console.WriteLine("ERROR: Can't connect to " + server);
                         Console.WriteLine("UserName and/or OAuthChat in settings.xml are invalid");
@@ -194,6 +195,17 @@ namespace TwitchBotLib
                                 if(Int16.TryParse(command,out vol))
                                 {
                                     soundPlayerVolume = vol;
+                                }
+                            }
+
+                            else if (command.StartsWith("max "))
+                            {
+                                command = command.Remove(0, 4).Trim();
+                                int amt;
+                                if (Int32.TryParse(command, out amt))
+                                {
+                                    BotSettings.MaxSubmissionsForSingleUser = amt;
+                                    Console.WriteLine("Max set to " + amt);
                                 }
                             }
 
@@ -431,49 +443,80 @@ namespace TwitchBotLib
 
         private static void PostToWebsite()
         {
-            string fileName = BotSettings.HTMLPage;
-            string tempDir = "\\temp";
 
-            if (!File.Exists(fileName))
-                return;
-
-            UpdateHTMLPage(fileName, tempDir);
-
-            string ftpurl = BotSettings.FTPAddress;
-            string ftpusername = BotSettings.FTPUserName;
-            string ftppassword = BotSettings.FTPPassword;
-
-            FtpWebRequest ftpClient = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + ftpurl + "/" + fileName));
-            ftpClient.Credentials = new System.Net.NetworkCredential(ftpusername, ftppassword);
-            ftpClient.Method = System.Net.WebRequestMethods.Ftp.UploadFile;
-            ftpClient.UseBinary = true;
-            ftpClient.KeepAlive = true;
-            System.IO.FileInfo fi = new System.IO.FileInfo(tempDir + "\\" + fileName);
-            ftpClient.ContentLength = fi.Length;
-            byte[] buffer = new byte[4097];
-            int bytes = 0;
-            int total_bytes = (int)fi.Length;
-            System.IO.FileStream fs = fi.OpenRead();
-            System.IO.Stream rs = ftpClient.GetRequestStream();
-            while (total_bytes > 0)
+            try
             {
-                bytes = fs.Read(buffer, 0, buffer.Length);
-                rs.Write(buffer, 0, bytes);
-                total_bytes = total_bytes - bytes;
-            }
-            //fs.Flush();
-            fs.Close();
-            rs.Close();
-            FtpWebResponse uploadResponse = (FtpWebResponse)ftpClient.GetResponse();
-            string value = uploadResponse.StatusDescription;
-            uploadResponse.Close();
+                string fileName = BotSettings.RootDirectory + BotSettings.HTMLPage;
+                string tempFile = BotSettings.RootDirectory + "temp\\" + BotSettings.HTMLPage;
+                string tempDir = BotSettings.RootDirectory + "temp";
 
-            File.Delete(tempDir + "\\" + fileName);
-            //Directory.Delete(tempDir);
+                if (!File.Exists(fileName))
+                {
+                    Console.WriteLine("Did not update HTML Page. No page to edit.");
+                    Console.WriteLine();
+                    return;
+                }
+
+                if (BotSettings.FTPUserName == "")
+                {
+                    Console.WriteLine("Did not update HTML Page. FTPUserName is blank.");
+                    Console.WriteLine();
+                    return;
+                }
+
+                if (BotSettings.FTPAddress == "")
+                {
+                    Console.WriteLine("Did not update HTML Page. FTPAddress is blank.");
+                    Console.WriteLine();
+                    return;
+                }
+
+                UpdateHTMLPage(fileName, tempDir, tempFile);
+
+                string ftpurl = BotSettings.FTPAddress;
+                string ftpusername = BotSettings.FTPUserName;
+                string ftppassword = BotSettings.FTPPassword;
+
+                FtpWebRequest ftpClient = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + ftpurl + "/" + BotSettings.HTMLPage));
+                ftpClient.Credentials = new System.Net.NetworkCredential(ftpusername, ftppassword);
+                ftpClient.Method = System.Net.WebRequestMethods.Ftp.UploadFile;
+                ftpClient.UseBinary = true;
+                ftpClient.KeepAlive = true;
+                System.IO.FileInfo fi = new System.IO.FileInfo(tempFile);
+                ftpClient.ContentLength = fi.Length;
+                byte[] buffer = new byte[4097];
+                int bytes = 0;
+                int total_bytes = (int)fi.Length;
+                System.IO.FileStream fs = fi.OpenRead();
+                System.IO.Stream rs = ftpClient.GetRequestStream();
+                while (total_bytes > 0)
+                {
+                    bytes = fs.Read(buffer, 0, buffer.Length);
+                    rs.Write(buffer, 0, bytes);
+                    total_bytes = total_bytes - bytes;
+                }
+                //fs.Flush();
+                fs.Close();
+                rs.Close();
+                FtpWebResponse uploadResponse = (FtpWebResponse)ftpClient.GetResponse();
+                string value = uploadResponse.StatusDescription;
+                uploadResponse.Close();
+
+                File.Delete(tempFile);
+                Directory.Delete(tempDir);
+                Console.WriteLine("HTML Page updated successfully.");
+                Console.WriteLine();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("HTML Page creation Error: " + ex.Message);
+                Console.WriteLine();
+            }
+
 
         }
 
-        private static void UpdateHTMLPage(string fileName, string tempDir)
+        private static void UpdateHTMLPage(string fileName, string tempDir, string tempFile)
         {
 
             string html = String.Empty;
@@ -486,9 +529,9 @@ namespace TwitchBotLib
                 html = html.Replace("{date}", DateTime.Now.ToString());
             }
 
-            Directory.CreateDirectory("temp");
+            Directory.CreateDirectory(tempDir);
 
-            using (StreamWriter sw = new StreamWriter(tempDir + "\\" + fileName, false))
+            using (StreamWriter sw = new StreamWriter(tempFile, false))
             {
                 sw.Write(html);
             }
