@@ -35,6 +35,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,9 +49,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\TwitchCSharp\TwitchCSharp.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotSettings.cs" />
     <Compile Include="IrcDotNet\CircularBufferStream.cs" />
     <Compile Include="IrcDotNet\Collections\CollectionsUtilities.cs" />
     <Compile Include="IrcDotNet\Collections\ReadOnlyDictionary.cs" />
@@ -117,6 +119,12 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SettingsHelp\SettingsHelp.csproj">
+      <Project>{7cf363d2-0616-4416-9877-0e3fdbf8a7aa}</Project>
+      <Name>SettingsHelp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

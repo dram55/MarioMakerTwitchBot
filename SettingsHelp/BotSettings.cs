@@ -60,6 +60,7 @@ namespace TwitchBotLib
         public static void Save()
         {
             SaveToSettingsFile();
+            LoadPublicProperties();
         }
 
         private static void LoadPublicProperties()

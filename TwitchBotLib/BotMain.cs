@@ -7,6 +7,10 @@ using System.Net;
 using WMPLib;
 using System.IO;
 
+using SettingsHelp;
+using System.Windows.Threading;
+
+
 namespace TwitchBotLib
 {
     public class BotMain 
@@ -19,6 +23,12 @@ namespace TwitchBotLib
         static DateTime soundCommandCooldown;
         static int cooldownSeconds;
         static IEnumerable<string> MAINCHANNEL;
+        static bool isConnectedToIRC;
+        static SettingsHelp.MainWindow settingsHelpWindow;
+
+        public bool IsExit { get; set; }
+
+        public bool Restart { get; set; }
 
         public BotMain()
         {
@@ -40,9 +50,12 @@ namespace TwitchBotLib
             Console.WriteLine("max 3       - Maximum of 3 level submissions per person");
             Console.WriteLine("s <cmnt>    - Save the current level to levels.csv with a comment");
             Console.WriteLine("");
-            Console.WriteLine("Commands for Sounds:");
+            Console.WriteLine("General Commands:");
             Console.WriteLine("v 30        - Set volume of media player to 30");
             Console.WriteLine("cool 65     - Set cooldown of sound commands to 65 seconds.");
+            Console.WriteLine();
+            Console.WriteLine("restart     - Restarts bot");
+            Console.WriteLine("settings    - Change settings");
             Console.WriteLine("exit        - Quit");
             Console.WriteLine("");
             Console.WriteLine("______________________________________________________");
@@ -52,11 +65,11 @@ namespace TwitchBotLib
         private void InitializeVariables()
         {
             levels = new LevelSubmitter();
-            twitchAPI = new TwitchAPI(BotSettings.BotOAuth, BotSettings.BotClientID);
             soundCommandCooldown = DateTime.MinValue;
             cooldownSeconds = 60;
             soundPlayerVolume = 15;
             invalidSubmission = 0;
+            isConnectedToIRC = true;
             MAINCHANNEL = new List<string> { "#" + BotSettings.UserName };  //A list to easily work with IrcDotNet
         }
 
@@ -73,10 +86,10 @@ namespace TwitchBotLib
                 // Wait until connection has succeeded or timed out.
                 using (var registeredEvent = new ManualResetEventSlim(false))
                 {
-                        //Group chat - for whisper (not using)
-                        //byte[]ip = {199,9,253,119};
-                        //IPAddress p = new IPAddress(ip);
-                        //IPEndPoint i = new IPEndPoint(p, 443);
+                    //Group chat - for whisper (not using)
+                    //byte[]ip = {199,9,253,119};
+                    //IPAddress p = new IPAddress(ip);
+                    //IPEndPoint i = new IPEndPoint(p, 443);
 
                         using (var connectedEvent = new ManualResetEventSlim(false))
                         {
@@ -89,41 +102,62 @@ namespace TwitchBotLib
                                     Password = BotSettings.OAuthChat,
                                     UserName = BotSettings.UserName
                                 });
-                            if (!connectedEvent.Wait(8000))
+                            if (!connectedEvent.Wait(3000))
                             {
+                                isConnectedToIRC = false;
                                 DisplayConnectionError(server);
-                                return;
-                            }
+                                OpenSettingsWindow();
+                                Console.WriteLine();
+                                Console.WriteLine();
+                                Console.WriteLine("Press Enter to restart Bot and apply new settings..");
+                                Console.WriteLine();
+                                Console.ReadLine();
+                                Restart = true;
+                        }
                     }
 
-                    if (!registeredEvent.Wait(8000))
+                    if (!registeredEvent.Wait(3000))
                     {
-                        DisplayConnectionError(server);
-                        return;
+                        if (isConnectedToIRC)
+                        {
+                            isConnectedToIRC = false;
+                            DisplayConnectionError(server);
+                            OpenSettingsWindow();
+                            Console.WriteLine();
+                            Console.WriteLine();
+                            Console.WriteLine("Press Enter to restart Bot and apply new settings.");
+                            Console.WriteLine();
+                            Console.ReadLine();
+                            Restart = true;
+                        }
                     }
                 }
 
+                if (isConnectedToIRC)
+                {
+                    twitchAPI = new TwitchAPI(BotSettings.BotOAuth, BotSettings.BotClientID);
+                    client.SendRawMessage("CAP REQ :twitch.tv/membership");  //request to have Twitch IRC send join/part & modes.
+                    client.Join(MAINCHANNEL);
+                    HandleEventLoop(client);
+                }
 
-                client.SendRawMessage("CAP REQ :twitch.tv/membership");  //request to have Twitch IRC send join/part & modes.
-
-                client.Join(MAINCHANNEL);
-
-                HandleEventLoop(client);
             }
+
         }
 
         #region Command Line Main Loop
-        private static void HandleEventLoop(IrcDotNet.IrcClient client)
+        private void HandleEventLoop(IrcDotNet.IrcClient client)
         {
-            bool isExit = false;
-            while (!isExit)
+            IsExit = false;
+            while (!IsExit)
             {
                 Console.Write("> ");
                 var command = Console.ReadLine();
                 switch (command)
                 {
                     case "exit":
-                        isExit = true;
+                    case "quit":
+                        IsExit = true;
                         break;
                     default:
                         if (!string.IsNullOrEmpty(command))
@@ -173,6 +207,16 @@ namespace TwitchBotLib
                                 SaveLevel(command);
                             }
 
+                            else if (command == "settings")
+                            {
+                                OpenSettingsWindow();
+                            }
+
+                            else if (command == "restart")
+                            {
+                                this.Restart = true;
+                                return;
+                            }
 
                             else if (command.StartsWith("v "))
                             {
@@ -258,12 +302,10 @@ namespace TwitchBotLib
 
         }
 
-
-
         #endregion
 
 
-        #region IRC Main Logic
+        #region IRC Event Handler Logic
 
         private static void IrcClient_Channel_MessageReceived(object sender, IrcMessageEventArgs e)
         {
@@ -357,7 +399,29 @@ namespace TwitchBotLib
         #region Helper Methods - TODO: Good candidates to be refactored elsewhere.
 
 
+        private static void OpenSettingsWindow()
+        {
+            if (isConnectedToIRC)
+            {
+                Console.WriteLine("");
+                Console.WriteLine("NOTE: If you update IRC settings, you must restart the bot for it to take effect.");
+                Console.WriteLine("");
+            }
 
+            Console.WriteLine("Opening Settings...");
+
+            Thread thread = new Thread(() =>
+            {
+                settingsHelpWindow = new MainWindow();
+                settingsHelpWindow.Show();
+                settingsHelpWindow.Closed += (s, e) => settingsHelpWindow.Dispatcher.InvokeShutdown();
+                Dispatcher.Run();
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+
+
+        }
 
 
         private static void SaveLevel(string comment)
@@ -432,7 +496,6 @@ namespace TwitchBotLib
 
         private static void PostToWebsite()
         {
-
             try
             {
                 string fileName = BotSettings.RootDirectory + BotSettings.HTMLPage;
@@ -476,19 +539,24 @@ namespace TwitchBotLib
                 byte[] buffer = new byte[4097];
                 int bytes = 0;
                 int total_bytes = (int)fi.Length;
-                FileStream fs = fi.OpenRead();
-                System.IO.Stream rs = ftpClient.GetRequestStream();
 
-                while (total_bytes > 0)
+
+                using (FileStream fs = fi.OpenRead())
                 {
-                    bytes = fs.Read(buffer, 0, buffer.Length);
-                    rs.Write(buffer, 0, bytes);
-                    total_bytes = total_bytes - bytes;
-                }
-                //fs.Flush();
+                    using (System.IO.Stream rs = ftpClient.GetRequestStream())
+                    {
 
-                fs.Close();
-                rs.Close();
+                        while (total_bytes > 0)
+                        {
+                            bytes = fs.Read(buffer, 0, buffer.Length);
+                            rs.Write(buffer, 0, bytes);
+                            total_bytes = total_bytes - bytes;
+                        }
+                        //fs.Close();
+                        //rs.Close();
+                    }
+                }
+
                 //FtpWebResponse uploadResponse = (FtpWebResponse)ftpClient.GetResponse();
                 //uploadResponse.Close();
 
@@ -531,13 +599,10 @@ namespace TwitchBotLib
         private static void DisplayConnectionError(string server)
         {
             Console.WriteLine("ERROR: Can't connect to " + server);
-            Console.WriteLine("<UserName> and/or <OAuthChat> are invalid in the settings file: ");
-            Console.WriteLine(BotSettings.RootDirectory + "\\settings.xml");
+            Console.WriteLine("User Name and/or OAuthChat are invalid in the Settings.");
             Console.WriteLine(" ");
-            Console.WriteLine("See ReadMe.txt for help");
-            Console.WriteLine(" ");
-            Console.WriteLine("Press Enter to Exit...");
-            Console.Read();
+            Console.WriteLine("Press Enter to Edit Settings");
+            Console.ReadLine();
         }
 
         private static void InvalidSubmission(IrcChannel channel)
