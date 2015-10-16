@@ -6,6 +6,7 @@ using IrcDotNet;
 using System.Net;
 using WMPLib;
 using System.IO;
+using System.Xaml;
 
 using SettingsHelp;
 using System.Windows.Threading;
