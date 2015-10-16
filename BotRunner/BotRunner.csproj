@@ -74,6 +74,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SettingsHelp\SettingsHelp.csproj">
+      <Project>{7cf363d2-0616-4416-9877-0e3fdbf8a7aa}</Project>
+      <Name>SettingsHelp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TwitchBotLib\TwitchBotLib.csproj">
       <Project>{0fe35c41-a4e6-4a7e-9e8b-142eaa92f9f7}</Project>
       <Name>TwitchBotLib</Name>
@@ -104,7 +108,8 @@
 
 cd $(TargetDir)
 IF NOT EXIST Publish MKDIR Publish
-IF EXIST Publish\$(TargetFileName) DEL Publish\$(TargetFileName)
+IF EXIST "Publish\$(TargetFileName)" DEL "Publish\$(TargetFileName)"
+IF EXIST SettingsHelp.exe xcopy "SettingsHelp.exe" "Publish" /i /Y
 cd $(ProjectDir)Resources
 ilmerge.exe "$(TargetDir)$(TargetFileName)" "$(TargetDir)TwitchCSharp.dll" "$(TargetDir)TwitchBotLib.dll" /out:"$(TargetDir)Publish\$(TargetFileName)" /target:exe
 xcopy *.txt* "$(TargetDir)Publish" /Y
@@ -115,12 +120,14 @@ set PDB=$(TargetDir)Publish\$(TargetFileName)
 set PDB="%25PDB:~0,-3%25pdb"
 IF EXIST %25PDB%25 DEL %25PDB%25
 
+
+
 :SkipPublish
 cd $(ProjectDir)Resources
-IF NOT EXIST $(TargetDir)settings.xml xcopy settings.xml "$(TargetDir)settings.xml" /s /i /Y
-IF NOT EXIST $(TargetDir)*.html xcopy *.html "$(TargetDir)" /Y
-IF NOT EXIST $(TargetDir)sounds MKDIR $(TargetDir)sounds
-xcopy sounds "$(TargetDir)sounds" /s /i /Y
+IF NOT EXIST "$(TargetDir)settings.xml" xcopy settings.xml "$(TargetDir)settings.xml" /s /i /Y
+IF NOT EXIST "$(TargetDir)*.html" xcopy *.html "$(TargetDir)*.html"
+IF NOT EXIST "$(TargetDir)sounds" MKDIR "$(TargetDir)sounds"
+
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
