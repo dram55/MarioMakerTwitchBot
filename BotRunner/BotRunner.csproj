@@ -109,7 +109,7 @@
 cd $(TargetDir)
 IF NOT EXIST Publish MKDIR Publish
 IF EXIST "Publish\$(TargetFileName)" DEL "Publish\$(TargetFileName)"
-IF EXIST SettingsHelp.exe xcopy "SettingsHelp.exe" "Publish" /i /Y
+IF EXIST SettingsHelp.exe xcopy "SettingsHelp.exe" "Publish" /Y
 cd $(ProjectDir)Resources
 ilmerge.exe "$(TargetDir)$(TargetFileName)" "$(TargetDir)TwitchCSharp.dll" "$(TargetDir)TwitchBotLib.dll" /out:"$(TargetDir)Publish\$(TargetFileName)" /target:exe
 xcopy *.txt* "$(TargetDir)Publish" /Y
@@ -121,10 +121,9 @@ set PDB="%25PDB:~0,-3%25pdb"
 IF EXIST %25PDB%25 DEL %25PDB%25
 
 
-
 :SkipPublish
 cd $(ProjectDir)Resources
-IF NOT EXIST "$(TargetDir)settings.xml" xcopy settings.xml "$(TargetDir)settings.xml" /s /i /Y
+IF NOT EXIST "$(TargetDir)settings.xml" xcopy settings.xml "$(TargetDir)settings.xml" /s /Y
 IF NOT EXIST "$(TargetDir)*.html" xcopy *.html "$(TargetDir)*.html"
 IF NOT EXIST "$(TargetDir)sounds" MKDIR "$(TargetDir)sounds"
 
