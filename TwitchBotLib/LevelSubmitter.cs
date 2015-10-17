@@ -157,6 +157,8 @@ namespace TwitchBotLib
         public void ForceAddLevel(string levelCode,string submitter)
         {
             _finalLevels.AddLast(new Tuple<string, string>(levelCode, submitter));
+            if (_finalLevels.Count == 1)
+                displayNextLevel();
         }
 
 

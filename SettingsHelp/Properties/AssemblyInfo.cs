@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("SettingsHelp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Grupo Bimbo")]
+[assembly: AssemblyCompany("dram")]
 [assembly: AssemblyProduct("SettingsHelp")]
-[assembly: AssemblyCopyright("Copyright © Grupo Bimbo 2015")]
+[assembly: AssemblyCopyright("dram © 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
