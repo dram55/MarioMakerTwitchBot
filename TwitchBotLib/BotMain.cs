@@ -27,6 +27,7 @@ namespace TwitchBotLib
         static IEnumerable<string> MAINCHANNEL;
         static bool isConnectedToIRC;
         static SettingsHelp.MainWindow settingsHelpWindow;
+        private static readonly ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsExit { get; set; }
 
         public bool Restart { get; set; }
@@ -389,11 +390,11 @@ namespace TwitchBotLib
         {
             e.Channel.MessageReceived -= IrcClient_Channel_MessageReceived;
         }
-            logger.Debug("IrcClient_LocalUser_JoinedChannel - e.Channel.MessageReceived += IrcClient_Channel_MessageReceived;");
+
         private static void IrcClient_LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
         {
+            logger.Debug("IrcClient_LocalUser_JoinedChannel - e.Channel.MessageReceived += IrcClient_Channel_MessageReceived;");
             e.Channel.MessageReceived += IrcClient_Channel_MessageReceived;
-
             Console.WriteLine("Bot ready in IRC channel {0}.", e.Channel.Name);
             Console.Write("> ");
         }
