@@ -46,6 +46,7 @@ namespace TwitchBotLib
             Console.WriteLine("o           - Open Queue");
             Console.WriteLine("c           - Close Queue");
             Console.WriteLine("Enter Key   - Next Level");
+            Console.WriteLine("prev        - Previous Level");
             Console.WriteLine("add <n> <l> - Force add level to current queue. <n>=name, <l>=level code");
             Console.WriteLine("q           - Display Remaining Queue");
             Console.WriteLine("limit 15    - Bot chooses 15 submitted levels at random");
@@ -190,13 +191,13 @@ namespace TwitchBotLib
                                 {
                                     levels.CloseQueue();
                                     client.SendPrivateMessage(MAINCHANNEL, "/me dramBoo Submissions Closed dramBoo");
-                                    if (levels.FinalLevels.Count > 0)
+                                    if (levels.Remaining > 0)
                                     {
                                         string plural = (levels.FinalLevels.Count != 1) ? " levels " : " level ";
                                         client.SendPrivateMessage(MAINCHANNEL, "/me " + levels.FinalLevels.Count + plural + "will be randomly picked.");
                                         client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel);
                                         Console.WriteLine();
-                                        Console.WriteLine(levels.CurrentLevel + " (" + levels.FinalLevels.Count + ")");
+                                        Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
                                         Console.WriteLine();
                                         PostToWebsite();
                                     }
@@ -273,29 +274,34 @@ namespace TwitchBotLib
                                 {
                                     if (LevelSubmitter.IsValidLevelCode(args[2]))
                                     { 
-                                        levels.ForceAddLevel(args[2], args[1]);
+                                        levels.ForceAddLevel(args[2].ToUpper(), args[1]);
                                         PostToWebsite();
+                                        if (levels.Remaining==0)
+                                            Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
                                     }
                                 }
                             }
+
+                            else if (command.Equals("prev"))
+                            {
+                                levels.PreviousLevel();
+                                Console.WriteLine();
+                                Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
+                                Console.WriteLine();
+                            }
+
                         }
 
                         //ELSE - command IsNullOrEmpty - (Enter Key pressed)
                         else 
                         {
-                            if (levels.FinalLevels.Count > 0)
+                            if (levels.Remaining > 0)
                             {
                                 levels.NextLevel();
-
-                                if (levels.FinalLevels.Count > 0)
-                                {
-                                    client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel);
-                                    Console.WriteLine();
-                                    Console.WriteLine(levels.CurrentLevel + " ("+ levels.FinalLevels.Count + ")");
-                                    Console.WriteLine();
-                                }
-                                else
-                                    Console.WriteLine("Queue Empty.");
+                                client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel);
+                                Console.WriteLine();
+                                Console.WriteLine(levels.CurrentLevel + " ("+ levels.Remaining + ")");
+                                Console.WriteLine();
                             }
                         }
 
