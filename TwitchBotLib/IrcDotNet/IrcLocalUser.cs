@@ -20,6 +20,8 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq} (local)")]
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
+        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         // True if local user is service; false, if local user is normal user.
         private bool isService;
 
@@ -401,9 +403,13 @@ namespace IrcDotNet
         /// <param name="e">The <see cref="IrcChannelEventArgs"/> instance containing the event data.</param>
         protected virtual void OnJoinedChannel(IrcChannelEventArgs e)
         {
+            logger.Debug("OnJoinedChannel - var handler = this.JoinedChannel;");
             var handler = this.JoinedChannel;
             if (handler != null)
+            {
+                logger.Debug("OnJoinedChannel - in (handler != null)");
                 handler(this, e);
+            }
         }
 
         /// <summary>

@@ -10,10 +10,14 @@ using System.Text.RegularExpressions;
 namespace IrcDotNet
 {
     using Collections;
+    using log4net;
 
     // Defines all message processors for the client.
     partial class IrcClient
     {
+
+        private static readonly ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// Process NICK messages received from the server.
         /// </summary>
@@ -58,6 +62,8 @@ namespace IrcDotNet
         [MessageProcessor("join")]
         protected internal void ProcessMessageJoin(IrcMessage message)
         {
+            logger.Debug("ProcessMessageJoin - Process JOIN messages received from the server:");
+            logger.Debug(message.ToString());
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(

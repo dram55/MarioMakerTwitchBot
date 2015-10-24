@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using log4net;
 
 #if !SILVERLIGHT
 using System.Net.Security;
@@ -18,6 +19,8 @@ namespace IrcDotNet
     /// <inheritdoc/>
     public class StandardIrcClient : IrcClient
     {
+        private static readonly ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         // Minimum duration of time to wait between sending successive raw messages.
         private const long minimumSendWaitTime = 50;
 
@@ -373,7 +376,7 @@ namespace IrcDotNet
                         break;
                     if (line.Length == 0)
                         continue;
-
+                    logger.Debug(line);
                     ParseMessage(line);
                 }
 

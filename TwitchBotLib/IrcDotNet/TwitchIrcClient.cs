@@ -10,6 +10,9 @@ namespace IrcDotNet
 {
     public class TwitchIrcClient : StandardIrcClient
     {
+
+        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         protected override void WriteMessage(string message, object token = null)
         {
             base.WriteMessage(message, token ?? new IrcRawMessageEventArgs(new IrcMessage(this, null, null, null), message));
@@ -39,6 +42,7 @@ namespace IrcDotNet
             
             // Twitch does not send a normal welcome message, so this code is actually incorrect.
             this.isRegistered = true;
+            logger.Debug("ProcessMessageReplyWelcome - OnRegistered(new EventArgs());");
             OnRegistered(new EventArgs());
         }
 

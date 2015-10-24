@@ -10,6 +10,7 @@ using System.Xaml;
 
 using SettingsHelp;
 using System.Windows.Threading;
+using log4net;
 
 
 namespace TwitchBotLib
@@ -26,7 +27,6 @@ namespace TwitchBotLib
         static IEnumerable<string> MAINCHANNEL;
         static bool isConnectedToIRC;
         static SettingsHelp.MainWindow settingsHelpWindow;
-
         public bool IsExit { get; set; }
 
         public bool Restart { get; set; }
@@ -71,13 +71,13 @@ namespace TwitchBotLib
             soundPlayerVolume = 15;
             invalidSubmission = 0;
             isConnectedToIRC = true;
-            MAINCHANNEL = new List<string> { "#" + BotSettings.UserName };  //A list to easily work with IrcDotNet
+            MAINCHANNEL = new List<string> { "#" + BotSettings.UserName };  //A List to work with IrcDotNet
         }
 
         public void StartBot()
         {
             string server = BotSettings.TwitchIRC;
-
+            logger.Debug("Connecting to IRC...");
             Console.WriteLine("Connecting...");
             Console.WriteLine("");
             using (var client = new TwitchIrcClient())
@@ -136,6 +136,7 @@ namespace TwitchBotLib
 
                 if (isConnectedToIRC)
                 {
+                    logger.Debug("Connected, about to join channel.");
                     twitchAPI = new TwitchAPI(BotSettings.BotOAuth, BotSettings.BotClientID);
                     client.SendRawMessage("CAP REQ :twitch.tv/membership");  //request to have Twitch IRC send join/part & modes.
                     client.Join(MAINCHANNEL);
@@ -149,6 +150,8 @@ namespace TwitchBotLib
         #region Command Line Main Loop
         private void HandleEventLoop(IrcDotNet.IrcClient client)
         {
+            logger.Debug("In HandleEventLoop");
+
             IsExit = false;
             while (!IsExit)
             {
@@ -377,6 +380,7 @@ namespace TwitchBotLib
         private static void IrcClient_Registered(object sender, EventArgs e)
         {
             var client = (IrcClient)sender;
+            logger.Debug("IrcClient_Registered - client.LocalUser.JoinedChannel += IrcClient_LocalUser_JoinedChannel;");
             client.LocalUser.JoinedChannel += IrcClient_LocalUser_JoinedChannel;
             client.LocalUser.LeftChannel += IrcClient_LocalUser_LeftChannel;
         }
@@ -385,7 +389,7 @@ namespace TwitchBotLib
         {
             e.Channel.MessageReceived -= IrcClient_Channel_MessageReceived;
         }
-
+            logger.Debug("IrcClient_LocalUser_JoinedChannel - e.Channel.MessageReceived += IrcClient_Channel_MessageReceived;");
         private static void IrcClient_LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
         {
             e.Channel.MessageReceived += IrcClient_Channel_MessageReceived;

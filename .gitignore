@@ -27,6 +27,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+#packages
+log4net.1.2.10/
+
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source

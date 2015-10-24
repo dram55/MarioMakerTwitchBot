@@ -55,6 +55,10 @@
     <ApplicationIcon>cat_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -72,6 +76,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SettingsHelp\SettingsHelp.csproj">
@@ -111,9 +116,10 @@ IF NOT EXIST Publish MKDIR Publish
 IF EXIST "Publish\$(TargetFileName)" DEL "Publish\$(TargetFileName)"
 IF EXIST SettingsHelp.exe xcopy "SettingsHelp.exe" "Publish" /Y
 cd $(ProjectDir)Resources
-ilmerge.exe "$(TargetDir)$(TargetFileName)" "$(TargetDir)TwitchCSharp.dll" "$(TargetDir)TwitchBotLib.dll" /out:"$(TargetDir)Publish\$(TargetFileName)" /target:exe
+ilmerge.exe "$(TargetDir)$(TargetFileName)" "$(TargetDir)log4net.dll" "$(TargetDir)TwitchCSharp.dll" "$(TargetDir)TwitchBotLib.dll" /out:"$(TargetDir)Publish\$(TargetFileName)" /target:exe
 xcopy *.txt* "$(TargetDir)Publish" /Y
 xcopy *settings.xml* "$(TargetDir)Publish" /Y
+xcopy "$(TargetPath).config" "$(TargetDir)Publish" /Y
 xcopy *.html "$(TargetDir)Publish" /Y
 xcopy sounds "$(TargetDir)Publish\sounds" /s /i /Y
 set PDB=$(TargetDir)Publish\$(TargetFileName)
