@@ -16,7 +16,8 @@ namespace TwitchBotLib
     public static class BotSettings
     {
         private const string XML_FILE = "settings.xml";
-        public static string UserName { get; private set; }
+        private static string _userName;
+        public static string UserName { get { return _userName.ToLower(); } private set { _userName = value.ToLower();} }
         public static string OAuthChat { get; private set; }
         public static string TwitchIRC { get; private set; }
         public static string BotClientID { get; private set; }
@@ -66,7 +67,7 @@ namespace TwitchBotLib
         private static void LoadPublicProperties()
         {
 
-            UserName = _settings["UserName"].Value;
+            UserName = _settings["UserName"].Value.ToLower();
             OAuthChat = _settings["OAuthChat"].Value;
             BotClientID = _settings["BotClientID"].Value;
             BotOAuth = _settings["BotOAuth"].Value;
