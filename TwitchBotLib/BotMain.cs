@@ -285,6 +285,7 @@ namespace TwitchBotLib
                             else if (command.Equals("prev"))
                             {
                                 levels.PreviousLevel();
+                                PostToWebsite();
                                 Console.WriteLine();
                                 Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
                                 Console.WriteLine();
@@ -298,6 +299,7 @@ namespace TwitchBotLib
                             if (levels.Remaining > 0)
                             {
                                 levels.NextLevel();
+                                PostToWebsite();
                                 client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel);
                                 Console.WriteLine();
                                 Console.WriteLine(levels.CurrentLevel + " ("+ levels.Remaining + ")");
@@ -494,12 +496,18 @@ namespace TwitchBotLib
         {
             StringBuilder returnHTML = new StringBuilder();
 
+            int index = levels.FinalLevels.Count - 1; //Cheesy way to highlight the current level. TODO: Change this. 
             foreach (var level in levels.FinalLevels)
             {
+                string htmlClass = "cell";
+                if (levels.Remaining == index)
+                    htmlClass += " current";
+
                 returnHTML.AppendLine("<tr>");
-                returnHTML.AppendLine("   <td class='cell'>" + level.Item2);
-                returnHTML.AppendLine("   <td class='cell'>" + level.Item1);
+                returnHTML.AppendLine("   <td class='" + htmlClass + "'>" + level.Item2);
+                returnHTML.AppendLine("   <td class='" + htmlClass + "'>" + level.Item1);
                 returnHTML.AppendLine("</tr>");
+                index--;
             }
 
             return returnHTML.ToString();
@@ -574,11 +582,13 @@ namespace TwitchBotLib
 
                 File.Delete(tempFile);
                 Directory.Delete(tempDir);
-                Console.WriteLine("HTML Page updated successfully.");
-                Console.WriteLine();
+                logger.Debug("HTML Page updated successfully.");
+                //Console.WriteLine("HTML Page updated successfully.");
+                //Console.WriteLine();
             }
             catch(Exception ex)
             {
+                logger.Debug("HTML Page creation Error: " + ex.Message);
                 Console.WriteLine("HTML Page creation Error: " + ex.Message);
                 Console.WriteLine();
             }
