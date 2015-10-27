@@ -18,6 +18,7 @@ namespace SettingsHelp
 
         private void wb_LoadCompleted(object sender, NavigationEventArgs e)
         {
+            //Hide visible scroll bar with injected javascript
             string script = "document.body.style.overflow ='hidden'";
             WebBrowser wb = (WebBrowser)sender;
             wb.InvokeScript("execScript", new Object[] { script, "JavaScript" });

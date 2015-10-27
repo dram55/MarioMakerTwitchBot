@@ -16,9 +16,14 @@ namespace SettingsHelp
         {
             InitializeComponent();
             LoadFromSettings();
-            Save.IsEnabled = false;
+            Save.IsEnabled = false; //Save button
         }
 
+        /// <summary>
+        /// Iterate over each TextBox on the control and 
+        /// LOAD it's value from the corresponding value in the
+        /// BotSettings dictionary
+        /// </summary>
         private void LoadFromSettings()
         {
             BotSettings.Load();
@@ -32,6 +37,11 @@ namespace SettingsHelp
             }
         }
 
+        /// <summary>
+        /// Iterate over each TextBox on the control and 
+        /// SET it's value to the corresponding value in the
+        /// BotSettings dictionary
+        /// </summary>
         private void SaveToSettings()
         {
             foreach (var control in thisGrid.Children)
@@ -46,31 +56,24 @@ namespace SettingsHelp
 
         private void buttonBotOAuth_Click(object sender, RoutedEventArgs e)
         {
-
-            GetSite gs = new GetSite();
-            gs.thisSite.Source = new Uri("http://goo.gl/53mMa2");
-            NavigationWindow _navigationWindow = new NavigationWindow();
-            _navigationWindow.ResizeMode = ResizeMode.NoResize;
-            _navigationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            _navigationWindow.Width = 500;
-            _navigationWindow.Height = 600;
-            _navigationWindow.Show();
-            _navigationWindow.WindowStyle = WindowStyle.ToolWindow;
-            _navigationWindow.Navigate(gs);
-
-
+            loadWebpage("http://goo.gl/53mMa2", 600, 500);
         }
 
 
         private void buttonOAuthChat_Click(object sender, RoutedEventArgs e)
         {
+            loadWebpage("https://twitchapps.com/tmi/", 500, 700);
+        }
+
+        private void loadWebpage(string address, int windowHeight, int windowWidth)
+        {
             GetSite gs = new GetSite();
-            gs.thisSite.Source = new Uri("https://twitchapps.com/tmi/");
+            gs.thisSite.Source = new Uri(address);
             NavigationWindow _navigationWindow = new NavigationWindow();
             _navigationWindow.ResizeMode = ResizeMode.NoResize;
             _navigationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            _navigationWindow.Width = 700;
-            _navigationWindow.Height = 500;
+            _navigationWindow.Width = windowWidth;
+            _navigationWindow.Height = windowHeight;
             _navigationWindow.Show();
             _navigationWindow.WindowStyle = WindowStyle.ToolWindow;
             _navigationWindow.Navigate(gs);
@@ -78,8 +81,8 @@ namespace SettingsHelp
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            SaveToSettings();
-            BotSettings.Save();
+            SaveToSettings();  //Save to dictionary
+            BotSettings.Save();//Save to XML
             Save.IsEnabled = false;
         }
 
@@ -90,7 +93,7 @@ namespace SettingsHelp
 
         private void AdjustedValue(object sender, TextChangedEventArgs e)
         {
-            Save.IsEnabled = true;
+            Save.IsEnabled = true; 
         }
 
     }
