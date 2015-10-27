@@ -284,6 +284,8 @@ namespace TwitchBotLib
 
                             else if (command.Equals("prev"))
                             {
+                                if (levels.Remaining == levels.FinalLevels.Count)
+                                    break;
                                 levels.PreviousLevel();
                                 PostToWebsite();
                                 Console.WriteLine();
