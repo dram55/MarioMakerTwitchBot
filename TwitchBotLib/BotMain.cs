@@ -258,7 +258,7 @@ namespace TwitchBotLib
                                 }
                             }
 
-                            else if (command.Equals("q"))
+                            else if (command == "q")
                             {
                                 foreach (var level in levels.FinalLevels)
                                 {
@@ -282,7 +282,7 @@ namespace TwitchBotLib
                                 }
                             }
 
-                            else if (command.Equals("prev"))
+                            else if (command == "prev")
                             {
                                 if (levels.Remaining == levels.FinalLevels.Count)
                                     break;
@@ -291,6 +291,11 @@ namespace TwitchBotLib
                                 Console.WriteLine();
                                 Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
                                 Console.WriteLine();
+                            }
+
+                            else if (command == "h" || command == "help")
+                            {
+                                DisplayMainMenu();
                             }
 
                         }
