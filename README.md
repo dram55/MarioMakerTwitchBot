@@ -13,7 +13,7 @@ The goal of this bot is to take level submissions without being overwhelmed & ha
  + Follow the Readme.txt to help set up the bot authorizations, configuration, etc..
 
 ###Bot Commands
-_Used in the CMD window when open the program_
+_Used in the CMD window of the program_
 
 	*Commands for Mario Maker*
 	o           - Open Queue
@@ -22,9 +22,9 @@ _Used in the CMD window when open the program_
 	prev        - Previous Level
 	add <n> <l> - Force add level to current queue. <n>=name, <l>=level code
 	q           - Display Remaining Queue
-	limit 15    - Bot chooses 15 submitted levels at random
+	limit 13    - When the queue closes, the bot will choose 13 submitted levels at random
 	max 3       - Maximum of 3 level submissions per person
-	s <cmnt>    - Save the current level to levels.csv with a comment
+	s <comment> - Save the current level to levels.csv with a comment
 	
 	*General Commands*
 	v 30        - Set volume of media player to 30
@@ -34,11 +34,11 @@ _Used in the CMD window when open the program_
 	help		- display help menu
 	exit        - Quit
 
-####Twitch Chat commands
+###Twitch Chat commands
 _Used in your Twitch Chat_
 
 	*General Commands*
-	!submit 1234-2222-3333-4444		- submits a Mario Maker level
+	!submit 1234-2222-3333-4444		- submit a Mario Maker level
 	
 	*Mod + Subscriber Only Commands*
 	!uptime							- Displays a random uptime.
