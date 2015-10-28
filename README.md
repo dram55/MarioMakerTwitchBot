@@ -1,5 +1,5 @@
 # MarioMakerTwitchBot
-Take Level Requests from Twitch chat ```!submit 0000-1111-AAAA-EEEE```. Requests are only accepted while bot is in an 'Open' status. When bot is 'Closed' it randomly picks levels for you to play. Mods and subs have 5x increased odds their level will be picked. Levels can also be manually force added to the queue.
+Take Level Requests from Twitch chat ```!submit 0000-1111-AAAA-EEEE```. Requests are only accepted while bot is in an 'Open' status. When bot is 'Closed' it randomly picks levels for you to play, the rest are discarded. Mods and subs have 5x increased odds their level will be picked. Levels can also be manually force added to the queue.
 
 Submission status & current level are written to respective text files which can be used within OBS. (open.txt close.txt nextLevel.txt)
 
