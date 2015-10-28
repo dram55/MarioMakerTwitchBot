@@ -180,7 +180,7 @@ namespace TwitchBotLib
                                 if (!levels.Open)
                                 {
                                     levels.OpenQueue();
-                                    client.SendPrivateMessage(MAINCHANNEL, "/me dramAhh Submissions Open dramAhh");
+                                    client.SendPrivateMessage(MAINCHANNEL, "/me Submissions Open");
                                     client.SendPrivateMessage(MAINCHANNEL, "/me Submit levels with !submit");
                                 }
                             }
@@ -190,8 +190,8 @@ namespace TwitchBotLib
                                 if (levels.Open)
                                 {
                                     levels.CloseQueue();
-                                    client.SendPrivateMessage(MAINCHANNEL, "/me dramBoo Submissions Closed dramBoo");
-                                    if (levels.Remaining > 0)
+                                    client.SendPrivateMessage(MAINCHANNEL, "/me Submissions Closed");
+                                    if (levels.FinalLevels.Count >= 0)
                                     {
                                         string plural = (levels.FinalLevels.Count != 1) ? " levels " : " level ";
                                         client.SendPrivateMessage(MAINCHANNEL, "/me " + levels.FinalLevels.Count + plural + "will be randomly picked.");
