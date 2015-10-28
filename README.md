@@ -1,15 +1,54 @@
 # MarioMakerTwitchBot
-Take Level Requests from Twitch chat ```!submit 0000-1111-AAAA-EEEE```. Requests are only accepted while bot is in an 'Open' status. When bot is 'Closed' it randomly picks levels for you to play. 
+Take Level Requests from Twitch chat ```!submit 0000-1111-AAAA-EEEE```. Requests are only accepted while bot is in an 'Open' status. When bot is 'Closed' it randomly picks levels for you to play. Mods and subs have 5x increased odds their level will be picked. Levels can also be manually force added to the queue.
 
 Submission status & current level are written to respective text files which can be used within OBS. (open.txt close.txt nextLevel.txt)
 
-If desired, the current queue of levels can be embedded to an html page using {details} and {date} tags and FTP'd to a webserver of your choice.
+If desired, the current queue of levels can be embedded to an html page using {details} and {date} tags and FTP'd to a webserver of your choice. Viewers can refer to this. 
+
+The goal of this bot is to take level submissions without being overwhelmed & having a huge queue. 
 
 
 ## To Use Program
  + Download zip from [here](http://dram55.com/programs)
- + Follow the Readme.txt to help set up the both authorizations, configuration, etc..
+ + Follow the Readme.txt to help set up the bot authorizations, configuration, etc..
 
+###Bot Commands
+_Used in the CMD window when open the program_
+
+	*Commands for Mario Maker*
+	o           - Open Queue
+	c           - Close Queue
+	Enter Key   - Next Level
+	prev        - Previous Level
+	add <n> <l> - Force add level to current queue. <n>=name, <l>=level code
+	q           - Display Remaining Queue
+	limit 15    - Bot chooses 15 submitted levels at random
+	max 3       - Maximum of 3 level submissions per person
+	s <cmnt>    - Save the current level to levels.csv with a comment
+	
+	*General Commands*
+	v 30        - Set volume of media player to 30
+	cool 65     - Set cooldown of sound commands to 65 seconds
+	restart     - Restarts bot
+	settings    - Change settings
+	help		- display help menu
+	exit        - Quit
+
+####Twitch Chat commands
+_Used in your Twitch Chat_
+
+	*General Commands*
+	!submit 1234-2222-3333-4444		- submits a Mario Maker level
+	
+	*Mod + Subscriber Only Commands*
+	!uptime							- Displays a random uptime.
+	!bfb							- Plays airhorn
+	!speed							- "Speedrun bitch"
+	!dik							- "speedrun my dik"
+	!yeah							- Little John "yeaaaaah"
+	
+_To turn off sounds just delete or rename the \sounds directory_
+ 
 ## Issues
  + Please [report any issues](https://github.com/dram55/MarioMakerTwitchBot/issues/new) if you come across any. 
 
@@ -26,8 +65,8 @@ If desired, the current queue of levels can be embedded to an html page using {d
 
 
 ### Documentation
-*Not Yet*
 
+	
 ### Building For the first time
 
  + On your first build the program will create an empty settings.xml & required files to the bin directory. 
