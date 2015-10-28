@@ -3,7 +3,7 @@ Take Level Requests from Twitch chat ```!submit 0000-1111-AAAA-EEEE```. Requests
 
 Submission status & current level are written to a '\text' directory where files can be used within OBS to display on stream. (open.txt, close.txt, nextLevel.txt)
 
-If desired, the current queue of levels can be embedded to an html page using {details} and {date} tags and FTP'd to a webserver of your choice. Viewers can refer to this. 
+If desired, the current queue of levels can be embedded to an html page using {details} and {date} tags and FTP'd to a webserver of your choice. Viewers can refer to this page. [Example](http://dram55.com/test/queue)
 
 The goal of this bot is to take level submissions without being overwhelmed & having a huge queue. 
 
