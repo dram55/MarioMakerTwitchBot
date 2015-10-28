@@ -43,13 +43,13 @@ namespace TwitchBotLib
             Console.WriteLine("Welcome to Chat Bot!");
             Console.WriteLine("");
             Console.WriteLine("Commands for Mario Maker:");
-            Console.WriteLine("o           - Open Queue");
-            Console.WriteLine("c           - Close Queue");
+            Console.WriteLine("o           - Open Submissions");
+            Console.WriteLine("c           - Close Submissions and create a queue");
             Console.WriteLine("Enter Key   - Next Level");
             Console.WriteLine("prev        - Previous Level");
             Console.WriteLine("add <n> <l> - Force add level to current queue. <n>=name, <l>=level code");
             Console.WriteLine("q           - Display Remaining Queue");
-            Console.WriteLine("limit 15    - Bot chooses 15 submitted levels at random");
+            Console.WriteLine("limit 15    - When submissions close - bot picks 15 levels at random");
             Console.WriteLine("max 3       - Maximum of 3 level submissions per person");
             Console.WriteLine("s <cmnt>    - Save the current level to levels.csv with a comment");
             Console.WriteLine("");

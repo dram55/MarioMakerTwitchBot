@@ -16,13 +16,13 @@ The goal of this bot is to take level submissions without being overwhelmed & ha
 _Used in the CMD window of the program_
 
 	*Commands for Mario Maker*
-	o           - Open Queue
-	c           - Close Queue
+	o           - Open Submissions
+	c           - Close Submissions and create a queue
 	Enter Key   - Next Level
 	prev        - Previous Level
 	add <n> <l> - Force add level to current queue. <n>=name, <l>=level code
 	q           - Display Remaining Queue
-	limit 13    - When the queue closes, the bot will choose 13 submitted levels at random
+	limit 13    - When Submissions close, the bot will choose 13 levels at random
 	max 3       - Maximum of 3 level submissions per person
 	s <comment> - Save the current level to levels.csv with a comment
 	
