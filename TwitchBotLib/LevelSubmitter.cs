@@ -12,6 +12,7 @@ namespace TwitchBotLib
         public int LevelLimit { get; set; }
         public List<Tuple<string, string>> AllLevels { get; private set; }
         private int currentIndex;
+        static Random r = new Random();
 
         string OPEN_TEXT_FILE = BotSettings.RootDirectory + "text\\open.txt";
         string CLOSE_TEXT_FILE = BotSettings.RootDirectory + "text\\close.txt";
@@ -160,7 +161,6 @@ namespace TwitchBotLib
             int counter = LevelLimit;
             while (counter > 0 && AllLevels.Count > 0)
             {
-                Random r = new Random();
                 int rand = r.Next(0, AllLevels.Count);
                 Tuple<string,string> randomlySelectedLevel = AllLevels[rand];
                 _finalLevels.Add(randomlySelectedLevel);
