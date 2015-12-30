@@ -503,6 +503,8 @@ namespace TwitchBotLib
         {
             StringBuilder returnHTML = new StringBuilder();
 
+            string marioMakerURL = @"https://supermariomakerbookmark.nintendo.net/courses/";
+
             int index = levels.FinalLevels.Count - 1; //Cheesy way to highlight the current level. TODO: Change this. 
             foreach (var level in levels.FinalLevels)
             {
@@ -512,7 +514,8 @@ namespace TwitchBotLib
 
                 returnHTML.AppendLine("<tr>");
                 returnHTML.AppendLine("   <td class='" + htmlClass + "'>" + level.Item2);
-                returnHTML.AppendLine("   <td class='" + htmlClass + "'>" + level.Item1);
+                returnHTML.AppendLine("   <td class='" + htmlClass + "'><a href=\""+ marioMakerURL + level.Item1 
+                    + "\" target=\"_blank\">" + level.Item1 + "</a>");
                 returnHTML.AppendLine("</tr>");
                 index--;
             }
