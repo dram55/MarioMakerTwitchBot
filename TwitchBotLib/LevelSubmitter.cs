@@ -120,11 +120,11 @@ namespace TwitchBotLib
         public void CloseQueue()
         {
             _finalLevels = new List<Tuple<string, string>>();
+            currentIndex = 0;
             randomlyPickLevels();
             displayCloseQueueText();
             displayNextLevel();
             AllLevels = new List<Tuple<string, string>>();
-            currentIndex = 0;
             Open = false;
         }
 
