@@ -182,12 +182,21 @@ namespace TwitchBotLib
 
 
 
-        public static bool IsValidLevelCode(string levelCode)
+        public static bool IsValidLevelCode(ref string levelCode)
         {
             //Capture hex in the format 0000-FFFF-EEEE-DDDD OR 0000FFFFEEEEDDDD (0000-FFFF-EEEEDDDD would work too.)
             Regex r = new Regex("^([0-9A-Fa-f]{4}-?){3}[0-9A-Fa-f]{4}$");
-            if (r.IsMatch(levelCode)) return true;
-            else return false;
+            if (!r.IsMatch(levelCode))
+                return false;
+            else
+            {
+                if (levelCode.Split('-').Length < 4)
+                {
+                    levelCode = levelCode.Replace("-", "");
+                    levelCode = levelCode.Substring(0,4) + "-" + levelCode.Substring(4, 4) + "-" + levelCode.Substring(8, 4) + "-" + levelCode.Substring(12, 4);
+                }
+                return true;
+            }
         }
 
 

@@ -149,6 +149,7 @@ namespace TwitchBotLib
 
         }
 
+
         #region Command Line Main Loop
         private void HandleEventLoop(IrcDotNet.IrcClient client)
         {
@@ -272,7 +273,7 @@ namespace TwitchBotLib
                                 string[]args = command.Split(' ');
                                 if (args.Length > 2)
                                 {
-                                    if (LevelSubmitter.IsValidLevelCode(args[2]))
+                                    if (LevelSubmitter.IsValidLevelCode(ref args[2]))
                                     { 
                                         levels.ForceAddLevel(args[2].ToUpper(), args[1]);
                                         PostToWebsite();
@@ -381,7 +382,7 @@ namespace TwitchBotLib
 
                         command = command.Remove(0,6).Trim();
 
-                        if (LevelSubmitter.IsValidLevelCode(command))
+                        if (LevelSubmitter.IsValidLevelCode(ref command))
                         {
                             if (user.IsOperator || twitchAPI.Subscribers.Contains(user.NickName))
                                 levels.AddLevel(command.ToUpper(), user.NickName, 5);
