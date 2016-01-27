@@ -6,8 +6,6 @@ using IrcDotNet;
 using System.Net;
 using WMPLib;
 using System.IO;
-using System.Xaml;
-
 using SettingsHelp;
 using System.Windows.Threading;
 using log4net;
@@ -138,7 +136,6 @@ namespace TwitchBotLib
                 if (isConnectedToIRC)
                 {
                     logger.Debug("Connected, about to join channel.");
-                    
                     client.SendRawMessage("CAP REQ :twitch.tv/membership");  //request to have Twitch IRC send join/part & modes.
                     client.Join(MAINCHANNEL);
                     HandleEventLoop(client);
@@ -262,7 +259,7 @@ namespace TwitchBotLib
                             {
                                 foreach (var level in levels.FinalLevels)
                                 {
-                                    Console.WriteLine(level.Item2 + " " + level.Item1);
+                                    Console.WriteLine(level.User.NickName + " " + level.LevelID);
                                 }
                             }
 
@@ -394,7 +391,7 @@ namespace TwitchBotLib
 
                         try
                         {
-                            LevelSubmission currentSubmission = new LevelSubmission(command, user);
+                            LevelSubmission currentSubmission = new LevelSubmission(command, user, false);
                             levels.AddLevel(currentSubmission);
                         }
                         catch (ArgumentException)
@@ -518,8 +515,6 @@ namespace TwitchBotLib
         {
             StringBuilder returnHTML = new StringBuilder();
 
-            string marioMakerURL = @"https://supermariomakerbookmark.nintendo.net/courses/";
-
             int index = levels.FinalLevels.Count - 1; //Cheesy way to highlight the current level. TODO: Change this. 
             foreach (var level in levels.FinalLevels)
             {
@@ -527,10 +522,19 @@ namespace TwitchBotLib
                 if (levels.Remaining == index)
                     htmlClass += " current";
 
+                string levelLinkClass = "";
+                string thumbnailURL = "";
+                if (level.Level != null)
+                {
+                    levelLinkClass = "preview";
+                    thumbnailURL = level.Level.ThumbnailURL;
+                }
+
+
                 returnHTML.AppendLine("<tr>");
-                returnHTML.AppendLine("   <td class='" + htmlClass + "'>" + level.Item2);
-                returnHTML.AppendLine("   <td class='" + htmlClass + "'><a href=\""+ marioMakerURL + level.Item1 
-                    + "\" target=\"_blank\">" + level.Item1 + "</a>");
+                returnHTML.AppendLine("   <td class='" + htmlClass + "'>" + level.User.NickName);
+                returnHTML.AppendLine("   <td class='" + htmlClass + "'><a href=\""+ level.BookmarkURL 
+                    + "\" target=\"_blank\" title=\""+ thumbnailURL + "\" class=\"" + levelLinkClass + "\">" + level.LevelID + "</a>");
                 returnHTML.AppendLine("</tr>");
                 index--;
             }
