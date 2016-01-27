@@ -9,7 +9,7 @@ using TwitchBotLib.SMMAPi;
 
 namespace TwitchBotLib.Objects
 {
-    class LevelSubmission
+    public class LevelSubmission
     {
         private const string MarioMakerBookmarkWebSite = @"https://supermariomakerbookmark.nintendo.net/courses/";
 
@@ -28,18 +28,22 @@ namespace TwitchBotLib.Objects
         public string Comment { get; set; }
         public Level Level { get; private set; }
 
-        public LevelSubmission(string levelID, IrcUser user)
+        public LevelSubmission(string levelID, IrcUser user, bool forceAdd)
         {
-            if (!IsValidLevelCode(levelID))
-                throw new ArgumentException("Invalid level code format");
 
+            //If you are force adding the level, bypass error checking, formatting and API call.
+            if (!forceAdd)
+            {
+                if (!IsValidLevelCode(levelID))
+                    throw new ArgumentException("Invalid level code format");
+                LevelID = FormatLevelCode(levelID);
+                Level = SMMApi.GetLevel(LevelID);
+                if (Level == null)
+                    throw new ArgumentException("Level does not exist");
+            }
+            else
+                LevelID = levelID;
             //Initiaze variables
-            LevelID = FormatLevelCode(levelID);
-            Level = SMMApi.GetLevel(LevelID); 
-
-            if (Level == null)
-                throw new ArgumentException("Level does not exist");
-
             User = user;
             IsPlayed = false;
             IsQueued = false;
