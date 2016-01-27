@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+
 namespace IrcDotNet
 {
     public class TwitchIrcClient : StandardIrcClient
@@ -31,6 +32,7 @@ namespace IrcDotNet
 
                 if (newModes == "+o")
                     user.IsOperator = true;
+
             }
         }
         protected override internal void ProcessMessageReplyWelcome(IrcMessage message)

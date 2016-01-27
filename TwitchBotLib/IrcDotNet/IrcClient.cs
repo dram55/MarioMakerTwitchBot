@@ -1243,7 +1243,7 @@ namespace IrcDotNet
         /// <param name="createdNew"><see langword="true"/> if the user object was created during the call;
         /// <see langword="false"/>, otherwise.</param>
         /// <returns>The user object that corresponds to the specified nick name.</returns>
-        protected IrcUser GetUserFromNickName(string nickName, bool isOnline, out bool createdNew)
+        public IrcUser GetUserFromNickName(string nickName, bool isOnline, out bool createdNew)
         {
             if (nickName == null)
                 throw new ArgumentNullException("nickName");

@@ -339,6 +339,16 @@ namespace TwitchBotLib
                 //Twitch notify will let you know if you have a new sub or are hosted.
                 if (user.NickName == "twitchnotify")
                 {
+                    //If you are getting an alert that someone subscribed..
+                    //then don't even bother with the API, just update IsSubscriber to true
+                    if (command.Contains(" subscribed "))
+                    {
+                        bool newUser;
+                        string userName = command.Split(' ')[0];
+                        IrcUser subscribedUser = channel.Client.GetUserFromNickName(userName, true, out newUser);
+                        subscribedUser.IsSubscriber = true;
+
+                    }
                     Console.WriteLine("");
                     Console.WriteLine(command);
                     Console.WriteLine("");
