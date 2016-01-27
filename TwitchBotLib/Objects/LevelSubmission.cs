@@ -13,8 +13,8 @@ namespace TwitchBotLib.Objects
     {
         private const string MarioMakerBookmarkWebSite = @"https://supermariomakerbookmark.nintendo.net/courses/";
 
-        public string LevelID { get;}
-        public IrcUser User { get; }
+        public string LevelID { get; private set; }
+        public IrcUser User { get; private set; }
         private string bookmarkURL;
         public string BookmarkURL
         {
