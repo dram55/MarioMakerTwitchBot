@@ -11,7 +11,7 @@ namespace TwitchBotLib
     {
         public bool Open { get; private set; }
         public int LevelLimit { get; set; }
-        public List<Tuple<string, string>> AllLevels { get; private set; }
+        public List<LevelSubmission> AllLevels { get; private set; }
         private int currentIndex;
         static Random r = new Random();
 
@@ -27,18 +27,28 @@ namespace TwitchBotLib
             }
         }
 
+        //public string CurrentLevel
+        //{
+        //    get {
+        //        if (_finalLevels.Count > 0)
+        //            return _finalLevels[currentIndex].User.NickName + ", " + _finalLevels[currentIndex].LevelID;
+        //        else
+        //            return String.Empty;
+        //    }
+        //}
         public string CurrentLevel
         {
-            get {
+            get
+            {
                 if (_finalLevels.Count > 0)
-                    return _finalLevels[currentIndex].Item2 + ", " + _finalLevels[currentIndex].Item1;
+                    return _finalLevels[currentIndex].User.NickName + ", " + _finalLevels[currentIndex].BookmarkURL;
                 else
                     return String.Empty;
             }
-
         }
-        private List<Tuple<string, string>> _finalLevels;
-        public List<Tuple<string, string>> FinalLevels
+
+        private List<LevelSubmission> _finalLevels;
+        public List<LevelSubmission> FinalLevels
         {
             get {
                     return _finalLevels;
@@ -52,8 +62,8 @@ namespace TwitchBotLib
         public LevelSubmitter()
         {
             Open = false;
-            AllLevels = new List<Tuple<string, string>>();
-            _finalLevels = new List<Tuple<string, string>>();
+            AllLevels = new List<LevelSubmission>();
+            _finalLevels = new List<LevelSubmission>();
             LevelLimit = 10;
             currentIndex = 0;
             CreateDirectories();
@@ -89,9 +99,8 @@ namespace TwitchBotLib
                 using (StreamWriter file = new StreamWriter(NEXT_LEVEL_FILE, false))
                 {
                     var currentLevel = _finalLevels[currentIndex];
-                    file.WriteLine(currentLevel.Item2);
-                    file.WriteLine(currentLevel.Item1);
-                    file.WriteLine("Levels: " + Remaining);
+                    file.WriteLine(currentLevel.User.NickName);
+                    file.WriteLine(currentLevel.LevelID);
                 }
             }
 
@@ -99,7 +108,7 @@ namespace TwitchBotLib
 
         public void OpenQueue()
         {
-            AllLevels = new List<Tuple<string, string>>();
+            AllLevels = new List<LevelSubmission>();
             displayOpenQueueText();
             this.Open = true;
         }
@@ -120,12 +129,12 @@ namespace TwitchBotLib
 
         public void CloseQueue()
         {
-            _finalLevels = new List<Tuple<string, string>>();
+            _finalLevels = new List<LevelSubmission>();
             currentIndex = 0;
             randomlyPickLevels();
             displayCloseQueueText();
             displayNextLevel();
-            AllLevels = new List<Tuple<string, string>>();
+            AllLevels = new List<LevelSubmission>();
             Open = false;
         }
 
@@ -142,26 +151,22 @@ namespace TwitchBotLib
             }
         }
 
-        private void AddLevel(string levelCode, string submitter, int timesToEnter)
+        private void AddLevelHelper(LevelSubmission submission, int timesToEnter)
         {
-            if (AllLevels.Any(t => t.Item1 == levelCode))
-                return;
             for (int i = 1; i <= timesToEnter; i++)
-            {
-                AllLevels.Add(new Tuple<string, string>(levelCode, submitter));
-            }
+                AllLevels.Add(submission);
         }
 
         internal void AddLevel(LevelSubmission currentSubmission)
         {
             //If level has already been submitted, then bail
-            if (AllLevels.Any(t => t.Item1 == currentSubmission.LevelID))
+            if (AllLevels.Any(t => t.LevelID == currentSubmission.LevelID))
                 return;
 
             if (currentSubmission.User.IsOperator || currentSubmission.User.IsSubscriber)
-                AddLevel(currentSubmission.LevelID, currentSubmission.User.NickName, 5);
+                AddLevelHelper(currentSubmission, 5);
             else
-                AddLevel(currentSubmission.LevelID, currentSubmission.User.NickName, 1);
+                AddLevelHelper(currentSubmission, 1);
 
         }
 
@@ -176,11 +181,11 @@ namespace TwitchBotLib
             while (counter > 0 && AllLevels.Count > 0)
             {
                 int rand = r.Next(0, AllLevels.Count);
-                Tuple<string,string> randomlySelectedLevel = AllLevels[rand];
+                LevelSubmission randomlySelectedLevel = AllLevels[rand];
                 _finalLevels.Add(randomlySelectedLevel);
-                AllLevels.RemoveAll(t => t.Item1 == randomlySelectedLevel.Item1);
-                if (_finalLevels.Count(t => t.Item2 == randomlySelectedLevel.Item2) >= BotSettings.MaxSubmissionsForSingleUser)
-                    AllLevels.RemoveAll(t => t.Item2 == randomlySelectedLevel.Item2);
+                AllLevels.RemoveAll(t => t.LevelID == randomlySelectedLevel.LevelID);
+                if (_finalLevels.Count(t => t.User.NickName == randomlySelectedLevel.User.NickName) >= BotSettings.MaxSubmissionsForSingleUser)
+                    AllLevels.RemoveAll(t => t.User.NickName == randomlySelectedLevel.User.NickName);
                 counter--;
             }
         }
@@ -188,7 +193,9 @@ namespace TwitchBotLib
 
         public void ForceAddLevel(string levelCode,string submitter)
         {
-            _finalLevels.Add(new Tuple<string, string>(levelCode, submitter));
+            IrcDotNet.IrcUser tempUser = new IrcDotNet.IrcUser { NickName = submitter };
+            LevelSubmission submission = new LevelSubmission(levelCode, tempUser, true);
+            _finalLevels.Add(submission);
             if (Remaining == 0)
                 displayNextLevel();
         }
