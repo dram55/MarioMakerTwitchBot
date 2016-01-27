@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
+using TwitchBotLib.Objects;
 
 namespace TwitchBotLib
 {
@@ -141,7 +142,7 @@ namespace TwitchBotLib
             }
         }
 
-        public void AddLevel(string levelCode, string submitter, int timesToEnter)
+        private void AddLevel(string levelCode, string submitter, int timesToEnter)
         {
             if (AllLevels.Any(t => t.Item1 == levelCode))
                 return;
@@ -149,6 +150,19 @@ namespace TwitchBotLib
             {
                 AllLevels.Add(new Tuple<string, string>(levelCode, submitter));
             }
+        }
+
+        internal void AddLevel(LevelSubmission currentSubmission)
+        {
+            //If level has already been submitted, then bail
+            if (AllLevels.Any(t => t.Item1 == currentSubmission.LevelID))
+                return;
+
+            if (currentSubmission.User.IsOperator || currentSubmission.User.IsSubscriber)
+                AddLevel(currentSubmission.LevelID, currentSubmission.User.NickName, 5);
+            else
+                AddLevel(currentSubmission.LevelID, currentSubmission.User.NickName, 1);
+
         }
 
         /// <summary>

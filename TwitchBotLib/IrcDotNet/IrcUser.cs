@@ -14,6 +14,10 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq}")]
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
+        
+
+        private bool? isSubscriber;
+
         private bool isOnline;
 
         private string nickName;
@@ -170,6 +174,26 @@ namespace IrcDotNet
             {
                 this.isOperator = value;
                 OnPropertyChanged(new PropertyChangedEventArgs("IsOperator"));
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the user is a subscriber.
+        /// </summary>
+        /// <value><see langword="true"/> if the user is a server operator; <see langword="false"/>, otherwise.</value>
+        public bool IsSubscriber
+        {
+            get {
+                if (isSubscriber == null)
+                {
+                    isSubscriber = client.TwitchAPI.Subscribers.Contains(this.NickName);
+                }
+                
+                return isSubscriber.Value;
+            }
+            internal set
+            {
+                this.IsSubscriber = value;
             }
         }
 

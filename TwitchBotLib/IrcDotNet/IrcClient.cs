@@ -138,6 +138,17 @@ namespace IrcDotNet
             InitializeMessageProcessors();
         }
 
+        private TwitchBotLib.TwitchAPI api;
+        public TwitchBotLib.TwitchAPI TwitchAPI
+        {
+            get
+            {
+                if (api == null)
+                    api = new TwitchBotLib.TwitchAPI();
+                return api;
+            }
+        }
+
         /// <summary>
         /// Finalizes an instance of the <see cref="IrcClient"/> class.
         /// </summary>
@@ -2052,6 +2063,8 @@ namespace IrcDotNet
 
                 this.Source = client.GetSourceFromPrefix(prefix);
             }
+
+
 
             /// <summary>
             /// Returns a string representation of this instance.

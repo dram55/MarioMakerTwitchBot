@@ -7,7 +7,7 @@ using TwitchCSharp.Helpers;
 
 namespace TwitchBotLib
 {
-    class TwitchAPI
+    public class TwitchAPI
     {
 
         private TwitchAuthenticatedClient twitchClient;
@@ -27,7 +27,7 @@ namespace TwitchBotLib
         }
         
 
-        public TwitchAPI(string botAuth, string botClientID)
+        public TwitchAPI()
         {
             _subscribers = new List<string>();
             connected = false;
@@ -36,7 +36,7 @@ namespace TwitchBotLib
             {
                 //TYPE THIS INTO BROWSER TO RECEIVE OAUTH FOR BOT + USER
                 //string uri = "https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=fjhkjex3dosfwql6jcne4klacgixv80&redirect_uri=http://dram55.com/bot&scope=user_read+channel_subscriptions+channel_check_subscription";
-                twitchClient = new TwitchAuthenticatedClient(botAuth, botClientID);
+                twitchClient = new TwitchAuthenticatedClient(BotSettings.BotOAuth, BotSettings.BotClientID);
                 connected = true;
             }
             catch (Exception)

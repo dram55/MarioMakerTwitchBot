@@ -11,7 +11,7 @@ using System.Xaml;
 using SettingsHelp;
 using System.Windows.Threading;
 using log4net;
-
+using TwitchBotLib.Objects;
 
 namespace TwitchBotLib
 {
@@ -19,7 +19,6 @@ namespace TwitchBotLib
     {
         //IRC variables, static
         static int invalidSubmission;
-        static TwitchAPI twitchAPI;
         static LevelSubmitter levels;
         static short soundPlayerVolume;
         static DateTime soundCommandCooldown;
@@ -139,7 +138,7 @@ namespace TwitchBotLib
                 if (isConnectedToIRC)
                 {
                     logger.Debug("Connected, about to join channel.");
-                    twitchAPI = new TwitchAPI(BotSettings.BotOAuth, BotSettings.BotClientID);
+                    
                     client.SendRawMessage("CAP REQ :twitch.tv/membership");  //request to have Twitch IRC send join/part & modes.
                     client.Join(MAINCHANNEL);
                     HandleEventLoop(client);
@@ -351,11 +350,12 @@ namespace TwitchBotLib
                     command = command.Remove(0,1);
 
                     //SUB and Operator only commands
-                    if (user.IsOperator || twitchAPI.Subscribers.Contains(user.NickName))
+                    if (user.IsOperator || user.IsSubscriber)
                     {
                         switch (command)
                         {
                             case "bfb": PlaySound("sounds\\bfb.mp3"); break;
+                            case "bes": PlaySound("sounds\\bes.mp3"); break;
                             case "speed": PlaySound("sounds\\speed.mp3"); break;
                             case "yeah": PlaySound("sounds\\yeah.mp3"); break;
                             case "dik": PlaySound("sounds\\dik.mp3"); break;
@@ -382,13 +382,17 @@ namespace TwitchBotLib
 
                         command = command.Remove(0,6).Trim();
 
-                        if (LevelSubmitter.IsValidLevelCode(ref command))
+                        try
                         {
-                            if (user.IsOperator || twitchAPI.Subscribers.Contains(user.NickName))
-                                levels.AddLevel(command.ToUpper(), user.NickName, 5);
-                            else
-                                levels.AddLevel(command.ToUpper(), user.NickName,1);
+                            LevelSubmission currentSubmission = new LevelSubmission(command, user);
+                            levels.AddLevel(currentSubmission);
                         }
+                        catch (ArgumentException)
+                        {
+                            //Invalid level code or API fuckup
+                            //code could go here to alert the user they f'd up.
+                        }
+
                     }
                 }
             }
