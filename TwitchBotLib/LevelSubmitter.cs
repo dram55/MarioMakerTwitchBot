@@ -36,14 +36,14 @@ namespace TwitchBotLib
         //            return String.Empty;
         //    }
         //}
-        public string CurrentLevel
+        public LevelSubmission CurrentLevel
         {
             get
             {
                 if (_finalLevels.Count > 0)
-                    return _finalLevels[currentIndex].User.NickName + ", " + _finalLevels[currentIndex].BookmarkURL;
+                    return _finalLevels[currentIndex];
                 else
-                    return String.Empty;
+                    return null;
             }
         }
 

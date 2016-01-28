@@ -20,7 +20,7 @@ namespace TwitchBotLib.SMMAPi
             {
                 JToken response = JObject.Parse(json);
                 Attempts = (string)response.SelectToken("attempts");
-                ClearRate = (decimal)response.SelectToken("clear_rate");
+                ClearRate = ((decimal)response.SelectToken("clear_rate")) * 100;
                 Author = (string)(response.SelectToken("creator").SelectToken("display_name"));
                 ThumbnailURL = (string)response.SelectToken("thumbnail");
                 Title = (string)response.SelectToken("title");

@@ -192,9 +192,9 @@ namespace TwitchBotLib
                                     {
                                         string plural = (levels.FinalLevels.Count != 1) ? " levels " : " level ";
                                         client.SendPrivateMessage(MAINCHANNEL, "/me " + levels.FinalLevels.Count + plural + "will be randomly picked.");
-                                        client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel);
+                                        client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel.User + " " + levels.CurrentLevel.LevelID);
                                         Console.WriteLine();
-                                        Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
+                                        Console.WriteLine(levels.CurrentLevel.User + " " + levels.CurrentLevel.LevelID + " (" + levels.Remaining + ")");
                                         Console.WriteLine();
                                         PostToWebsite();
                                     }
@@ -274,7 +274,7 @@ namespace TwitchBotLib
                                         levels.ForceAddLevel(args[2].ToUpper(), args[1]);
                                         PostToWebsite();
                                         if (levels.Remaining==0)
-                                            Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
+                                            Console.WriteLine(levels.CurrentLevel.User +" " + levels.CurrentLevel.LevelID + " (" + levels.Remaining + ")");
                                     }
                                 }
                             }
@@ -286,7 +286,7 @@ namespace TwitchBotLib
                                 levels.PreviousLevel();
                                 PostToWebsite();
                                 Console.WriteLine();
-                                Console.WriteLine(levels.CurrentLevel + " (" + levels.Remaining + ")");
+                                Console.WriteLine(levels.CurrentLevel.User + " " + levels.CurrentLevel.LevelID + " (" + levels.Remaining + ")");
                                 Console.WriteLine();
                             }
 
@@ -304,9 +304,9 @@ namespace TwitchBotLib
                             {
                                 levels.NextLevel();
                                 PostToWebsite();
-                                client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel);
+                                client.SendPrivateMessage(MAINCHANNEL, "/me Now Playing: " + levels.CurrentLevel.User + " " + levels.CurrentLevel.LevelID);
                                 Console.WriteLine();
-                                Console.WriteLine(levels.CurrentLevel + " ("+ levels.Remaining + ")");
+                                Console.WriteLine(levels.CurrentLevel.User + " " + levels.CurrentLevel.LevelID + " (" + levels.Remaining + ")");
                                 Console.WriteLine();
                             }
                         }
@@ -459,7 +459,7 @@ namespace TwitchBotLib
 
         private static void SaveLevel(string comment)
         {
-            if (levels.CurrentLevel != String.Empty)
+            if (levels.CurrentLevel != null)
             {
                 if (comment.Contains("\""))
                 {
@@ -471,7 +471,7 @@ namespace TwitchBotLib
                     comment = comment.Replace(",", " ");
                 }
 
-                if (comment.Contains(System.Environment.NewLine))
+                if (comment.Contains(Environment.NewLine))
                 {
                     comment = string.Format("\"{0}\"", comment);
                 }
@@ -480,16 +480,14 @@ namespace TwitchBotLib
                 {
                     using (StreamWriter sc = new StreamWriter("levels.csv", true))
                     {
-                        sc.WriteLine(levels.CurrentLevel + ", " + comment);
-                        Console.WriteLine("Saved to levels.csv " + levels.CurrentLevel);
+                        sc.WriteLine("{0},{1},{2},{3}",levels.CurrentLevel.User , levels.CurrentLevel.LevelID, levels.CurrentLevel.BookmarkURL, comment);
+                        Console.WriteLine("Saved to levels.csv");
                         Console.WriteLine("");
                     }
                 }
                 catch
                 {
                     Console.WriteLine("Could not save level.");
-                    Console.WriteLine("Is it opened in another program?");
-                    Console.WriteLine("");
                 }
             }
         }
@@ -524,17 +522,22 @@ namespace TwitchBotLib
 
                 string levelLinkClass = "";
                 string thumbnailURL = "";
+                string dataValues = "";
                 if (level.Level != null)
                 {
                     levelLinkClass = "preview";
                     thumbnailURL = level.Level.ThumbnailURL;
+                    if (level.Level.Title != null)
+                        dataValues += " data-title=\"" + level.Level.Title +"\" ";
+                    if (level.Level.Attempts != null)
+                        dataValues += " data-clear=\"" + String.Format("{0:F2}",level.Level.ClearRate) + "%\" ";
                 }
 
 
                 returnHTML.AppendLine("<tr>");
                 returnHTML.AppendLine("   <td class='" + htmlClass + "'>" + level.User.NickName);
                 returnHTML.AppendLine("   <td class='" + htmlClass + "'><a href=\""+ level.BookmarkURL 
-                    + "\" target=\"_blank\" title=\""+ thumbnailURL + "\" class=\"" + levelLinkClass + "\">" + level.LevelID + "</a>");
+                    + "\" target=\"_blank\" title=\""+ thumbnailURL + "\" "+dataValues+" class=\"" + levelLinkClass + "\">" + level.LevelID + "</a>");
                 returnHTML.AppendLine("</tr>");
                 index--;
             }

@@ -4,11 +4,21 @@
     <META HTTP-EQUIV="refresh" CONTENT="60">
 	<title>Queue</title>
 	<style>
+		#preview{
+	position:absolute;
+	border:1px solid #ccc;
+	background:#333;
+	padding:5px;
+	display:none;
+	color:#fff;
+	}
+	
 	  .cell{padding: 5 35 5 35;}
-	  .current{background-color:#009999;border-radius:40px;}
 	  table{margin:0 auto;padding-bottom:30px}
 	  .mario{width:200px; height:280px; margin:0 auto; display: block;}
 	</style>
+<script src="scripts/jquery.js" type="text/javascript"></script>
+<script src="scripts/main.js" type="text/javascript"></script>
  </head>
  <body>
 	<div id="site_content">
@@ -19,7 +29,7 @@
 	<table>
 		<tr>
 			<th class='cell'>Submitted by
-			<th class='cell'>Level Name
+			<th class='cell'>Level
 		<tr>
 		{details}
 	</table>
