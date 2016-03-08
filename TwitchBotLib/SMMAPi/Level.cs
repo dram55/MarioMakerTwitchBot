@@ -8,11 +8,11 @@ namespace TwitchBotLib.SMMAPi
     /// </summary>
     public class Level
     {
-        public string Attempts { get; }
-        public decimal ClearRate { get; }
-        public string Author { get; }
-        public string ThumbnailURL { get; }
-        public string Title { get; }
+        public string Attempts { get; private set; }
+        public decimal ClearRate { get; private set; }
+        public string Author { get; private set; }
+        public string ThumbnailURL { get; private set; }
+        public string Title { get; private set; }
 
         public Level(string json)
         {
